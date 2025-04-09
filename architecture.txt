@@ -1,0 +1,10 @@
+📁 projet_usecase/
+├── data/
+│   └── tes_fichiers.csv
+├── notebooks/
+│   └── etl_pipeline.ipynb
+├── output/
+│   └── clean_data.parquet
+├── app/
+│   └── dashboard_streamlit.py (ou .ipynb si en notebook)
+└── README.md (explication des étapes équivalentes à Fabric)
