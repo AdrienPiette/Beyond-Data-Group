@@ -13,7 +13,6 @@ This project replicates the logic of a Microsoft Fabric use case using only Pyth
 
 ## 📁 Project Structure
 ```bash
-```bash
 fabric_sim_python/
 ├── app/                     # Streamlit application files and semantic model
 ├── csv/                     # Raw CSV files (data input simulation)
@@ -26,12 +25,15 @@ fabric_sim_python/
 
 ## 🧠 Semantic Model (`model.py`)
 This file acts as the business layer. It:
+
 - Loads and joins tables: `absence`, `contract_basis`, and `absence_type`
 - Cleans and transforms data (e.g., handling NaNs, casting types)
 - Calculates measures:
   - `total_absence_days`
   - `absence_rate`
   - `employee_count`
+  - `gender_distribution_by_firm`
+  - `average_age_by_firm`
 - Reshapes the absence table (wide to long format) and enriches it using `absence_type`
 
 Key functions:
@@ -40,6 +42,8 @@ Key functions:
 - `enrich_absence_with_type()`: Pivot and join absence type descriptions
 - `absences_by_type()`: Aggregate total days by absence type
 - `total_employees_by_firm()` / `average_absence_rate_by_firm()` / `contract_type_distribution_by_firm()`
+- `gender_distribution_by_firm()`: Count of men and women per company
+- `average_age_by_firm()`: Compute mean age per company using birth date
 
 ---
 
@@ -52,9 +56,11 @@ Features:
   - Total employees
   - Average absence rate
   - Total days of absence
+  - Average age
 - Charts:
   - Contract type distribution (bar chart)
   - Absence type distribution (pie chart)
+  - Gender distribution per firm (bar chart)
 
 Future ideas:
 - Filters by date (month, quarter, year)
@@ -91,9 +97,11 @@ Here are some screenshots of the dashboard:
 
 ### Detailed Insights
 ![Detailed Insights](pictures/image_2.png)
+![Detailed Insights](pictures/image_3.png)
 
 ---
 
 ## 🧑‍💻 Author
 Adrien Piette  
 Simulated Microsoft Fabric, one block at a time 🚀
+
