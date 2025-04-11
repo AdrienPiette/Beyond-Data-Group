@@ -116,6 +116,25 @@ def average_absence_rate_by_firm(df):
 
 
 def contract_type_distribution_by_firm(df):
+    """
+    Computes the distribution of contract types by firm.
+
+    This function groups the input DataFrame by 'firm_id' and 'contract_type',
+    counts the number of occurrences of 'person_id' for each group, and returns
+    a new DataFrame with the counts.
+
+    Args:
+        df (pandas.DataFrame): A DataFrame containing the following columns:
+            - 'firm_id': Identifier for the firm.
+            - 'contract_type': Type of contract (e.g., full-time, part-time).
+            - 'person_id': Identifier for the person.
+
+    Returns:
+        pandas.DataFrame: A DataFrame with the following columns:
+            - 'firm_id': Identifier for the firm.
+            - 'contract_type': Type of contract.
+            - 'count': The number of occurrences of each contract type per firm.
+    """
     return (
         df.groupby(["firm_id", "contract_type"])["person_id"]
         .count()
@@ -124,6 +143,16 @@ def contract_type_distribution_by_firm(df):
 
 
 def filter_by_contract_type(df, contract_type="CDI"):
+    """
+    Filters a DataFrame to include only rows where the 'contract_type' column matches the specified contract type.
+
+    Args:
+        df (pandas.DataFrame): The input DataFrame containing a 'contract_type' column.
+        contract_type (str, optional): The contract type to filter by. Defaults to "CDI".
+
+    Returns:
+        pandas.DataFrame: A filtered DataFrame containing only rows with the specified contract type.
+    """
     return df[df["contract_type"] == contract_type]
 
 
