@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 def load_data(conn):
     """
@@ -84,3 +85,13 @@ def absences_by_type(enriched_absences_df):
     Agrège les absences par type pour affichage.
     """
     return enriched_absences_df.groupby("type_absence_fr")["days"].sum().reset_index().sort_values(by="days", ascending=False)
+
+def gender_distribution_by_firm(df):
+    return df.groupby(["firm_id", "gender"])["person_id"].nunique().reset_index(name="employee_count")
+
+
+def average_age_by_firm(df):
+    today = pd.Timestamp(datetime.today())
+    df['birth_date'] = pd.to_datetime(df['birth_date'], errors='coerce')
+    df['age'] = ((today - df['birth_date']).dt.days / 365.25).round(1)
+    return df.groupby("firm_id")["age"].mean().reset_index(name="average_age")
