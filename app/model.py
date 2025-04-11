@@ -64,12 +64,20 @@ def enrich_absence_with_type(absence_df, absence_type_df):
         value_name="days"
     )
 
+    # Extraire le code d'absence (ex: qty_p1_days → P1)
     melted["type_absence_code"] = melted["absence_code_col"].str.extract(r"qty_([a-z0-9]+)_days", expand=False).str.upper()
 
+    # Patch : renommer la colonne pour pouvoir merger
+    absence_type_df = absence_type_df.rename(columns={"type_absence": "type_absence_code"})
+
+    # Merge avec référentiel
     enriched = melted.merge(absence_type_df, on="type_absence_code", how="left")
+
+    # Garder uniquement les absences réelles
     enriched = enriched[enriched["days"] > 0]
 
     return enriched
+
 
 def absences_by_type(enriched_absences_df):
     """
