@@ -13,12 +13,13 @@ This project replicates the logic of a Microsoft Fabric use case using only Pyth
 
 ## 📁 Project Structure
 ```bash
+```bash
 fabric_sim_python/
-├── data/                      # Raw CSV files
-├── fabric_sim.db              # SQLite database (Lakehouse simulation)
-├── model.py                   # Semantic model logic (equivalent to Power BI dataset)
-├── app.py                     # Streamlit dashboard (equivalent to Power BI report)
-├── README.md                  # Project documentation
+├── app/                     # Streamlit application files and semantic model
+├── csv/                     # Raw CSV files (data input simulation)
+├── notebooks/               # Jupyter notebooks for data exploration and transformation
+├── pictures/                # Images and screenshots for documentation
+├── README.md                # Project documentation
 ```
 
 ---
@@ -82,7 +83,6 @@ streamlit run app.py
 
 ---
 
-## 📸 Screenshot
 ## 📸 Screenshot
 Here are some screenshots of the dashboard:
 
