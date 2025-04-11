@@ -1,3 +1,11 @@
+"""
+Streamlit Dashboard for HR Analytics.
+
+This dashboard provides insights into employee data, including absence rates,
+contract distribution, gender distribution, and more. It connects to a SQLite
+database and uses Plotly for visualizations.
+"""
+
 import sqlite3
 import plotly.express as px
 import streamlit as st
