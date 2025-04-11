@@ -17,7 +17,7 @@ This project replicates the logic of a Microsoft Fabric use case using only Pyth
 fabric_sim_python/
 ├── app/                     # Streamlit application files and semantic model
 ├── csv/                     # Raw CSV files (data input simulation)
-├── notebooks/               # Jupyter notebooks for data exploration and transformation
+├── notebooks/               # Jupyter notebooks for data exploration, semantic model exploration and lake house creation
 ├── pictures/                # Images and screenshots for documentation
 ├── README.md                # Project documentation
 ```
@@ -97,5 +97,3 @@ Here are some screenshots of the dashboard:
 ## 🧑‍💻 Author
 Adrien Piette  
 Simulated Microsoft Fabric, one block at a time 🚀
-
-
