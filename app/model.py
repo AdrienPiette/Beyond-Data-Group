@@ -1,29 +1,37 @@
 import pandas as pd
 
 def load_data(conn):
-    """Charge et fusionne les données contractuelles et d'absence."""
+    """
+    Charge et fusionne les données contract_basis et absence.
+    Calcule le total des jours d'absence et le taux d'absence.
+    """
     absence = pd.read_sql("SELECT * FROM absence", conn)
     contract = pd.read_sql("SELECT * FROM contract_basis", conn)
 
-    # Fusion sur les clés communes
     df = contract.merge(absence, on=["firm_id", "person_id", "department_id", "category_id"], how="left")
 
-    # Forcer les colonnes d'absence à float
+    # Identifier les colonnes d'absence par code
     absence_columns = [col for col in df.columns if col.startswith("qty_") and col.endswith("_days")]
-    df[absence_columns] = df[absence_columns].fillna(0)
 
+    # Nettoyage + conversion
+    df[absence_columns] = df[absence_columns].fillna(0)
     for col in absence_columns:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Calcul du total de jours d'absence
+    # Calcul total jours d'absence toutes causes
     df['total_absence_days'] = df[absence_columns].sum(axis=1)
 
-    # Calcul du taux d'absence
+    # Calcul taux d'absence
     df['absence_rate'] = df['total_absence_days'] / df['qty_working_days']
-
     df['absence_rate'] = df['absence_rate'].replace([float('inf'), -float('inf')], None)
 
     return df
+
+def load_absence_type(conn):
+    """
+    Charge la table absence_type (référentiel des codes d’absence)
+    """
+    return pd.read_sql("SELECT * FROM absence_type", conn)
 
 
 # === MESURES SÉMANTIQUES ===
@@ -39,3 +47,32 @@ def contract_type_distribution_by_firm(df):
 
 def filter_by_contract_type(df, contract_type="CDI"):
     return df[df["contract_type"] == contract_type]
+
+
+# === ENRICHISSEMENT AVEC absence_type ===
+
+def enrich_absence_with_type(absence_df, absence_type_df):
+    """
+    Transforme les colonnes qty_*_days en format long et les relie aux types d'absences.
+    """
+    qty_columns = [col for col in absence_df.columns if col.startswith("qty_") and col.endswith("_days")]
+
+    melted = absence_df.melt(
+        id_vars=["firm_id", "department_id", "category_id", "person_id", "year", "month"],
+        value_vars=qty_columns,
+        var_name="absence_code_col",
+        value_name="days"
+    )
+
+    melted["type_absence_code"] = melted["absence_code_col"].str.extract(r"qty_([a-z0-9]+)_days", expand=False).str.upper()
+
+    enriched = melted.merge(absence_type_df, on="type_absence_code", how="left")
+    enriched = enriched[enriched["days"] > 0]
+
+    return enriched
+
+def absences_by_type(enriched_absences_df):
+    """
+    Agrège les absences par type pour affichage.
+    """
+    return enriched_absences_df.groupby("type_absence_fr")["days"].sum().reset_index().sort_values(by="days", ascending=False)
