@@ -6,22 +6,25 @@ import pandas as pd
 def load_data(conn):
     """
     Loads and processes data from a database connection.
+
     This function retrieves data from two database tables, `absence` and 
     `contract_basis`, merges them, and performs data cleaning and calculations 
     to compute total absence days and absence rate for each record.
+
     Args:
         conn (sqlalchemy.engine.Connection or similar): 
             A database connection object used to execute SQL queries.
+
     Returns:
         pandas.DataFrame: 
             A DataFrame containing the merged and processed data with the 
             following additional columns:
             - `total_absence_days`: Total absence days calculated by summing 
-              all absence-related columns.
+            all absence-related columns.
             - `absence_rate`: Absence rate calculated as the ratio of total 
-              absence days to working days. Infinite values are replaced with 
-              None.
-    """
+            absence days to working days. Infinite values are replaced with 
+            None.
+"""
 
     absence = pd.read_sql("SELECT * FROM absence", conn)
     contract = pd.read_sql("SELECT * FROM contract_basis", conn)
