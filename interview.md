@@ -82,3 +82,42 @@
 ### 🔹 **Workspace Fabric**
 
 > Espace collaboratif de projet. Regroupe tous les objets Fabric (Lakehouse, Dataflow, modèles, rapports, notebooks…).
+
+---
+
+## ✅ PART 3 — Étapes recommandées pour présenter ton projet
+
+1. **Introduction (1 min)**
+
+> "J’ai développé une simulation complète d’un pipeline Fabric en Python, suite à l’impossibilité d’accéder à la version d’essai officielle."
+
+2. **Structure du projet (1–2 min)**
+
+> * Input : fichiers CSV RH (absences, contrats, salaires)
+> * Lakehouse simulé : SQLite DB
+> * Dataflows Gen2 : traitement `pandas` dans `model.py`
+> * Semantic model : fonctions de calculs métier (absence rate, effectifs, salaire moyen)
+> * Dashboard : app Streamlit interactive qui simule Power BI
+
+3. **Focus fonctionnel (2 min)**
+
+> * Taux d’absence (corrigé pour les incohérences >100%)
+> * Salaires : net, brut, brut 108, écart H/F, distribution
+> * Visualisation par entreprise
+
+4. **Points forts**
+
+> * Autonomie / adaptation à l’indisponibilité de Fabric
+> * Nettoyage intelligent des données (virgules, strings)
+> * Modèle sémantique simulé dans Python
+
+5. **Limites / perspectives**
+
+> * Pas de lien direct entre la table des salaires et les contrats (pas de `person_id`)
+> * Enrichissement possible avec filtres temporels, exports, ou Streamlit Cloud
+
+---
+
+## ✅ Phrase d'accroche pour démarrer l'entretien
+
+> "Pour répondre au use case RH qui m’a été confié, j’ai simulé l’ensemble du pipeline Microsoft Fabric avec des outils Python. Cela m’a permis d’appliquer les étapes Fabric (ingestion, transformation, modélisation, visualisation) tout en gardant une logique claire, modulaire, et adaptée aux contraintes techniques du moment."
