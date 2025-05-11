@@ -184,11 +184,7 @@ else:
 
     st.plotly_chart(fig_dist, use_container_width=True)
 
-
-
-
-
-
+    # Distribution
 
     filtered = df_salary[(df_salary["net_salary"] >= 300) & (df_salary["net_salary"] <= 5000)]
 

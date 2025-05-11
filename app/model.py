@@ -26,24 +26,22 @@ def load_data(conn):
     absence = pd.read_sql("SELECT * FROM absence", conn)
     contract = pd.read_sql("SELECT * FROM contract_basis", conn)
 
+    
+
     df = contract.merge(
         absence,
         on=["firm_id", "person_id", "department_id", "category_id"],
         how="left",
     )
 
-    # Identify absence columns by code
-    absence_columns = [
-        col for col in df.columns if col.startswith("qty_") and col.endswith("_days")
-    ]
+    # Clean the key absence metric
+    df["qty_illness_days"] = pd.to_numeric(df["qty_illness_days"], errors="coerce").fillna(0)
 
-    # Cleaning + conversion
-    df[absence_columns] = df[absence_columns].fillna(0)
-    for col in absence_columns:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
+    # Use it directly as total absence days
+    df["total_absence_days"] = df["qty_illness_days"]
+    df["qty_working_days"] = pd.to_numeric(df["qty_working_days"], errors="coerce").fillna(0)
 
-    # Calculate total absence days for all causes
-    df["total_absence_days"] = df[absence_columns].sum(axis=1)
+
 
     # Calculate absence rate
     df["absence_rate"] = df["total_absence_days"] / df["qty_working_days"]
