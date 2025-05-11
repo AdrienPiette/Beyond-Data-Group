@@ -293,3 +293,87 @@ def average_age_by_firm(df):
     df["birth_date"] = pd.to_datetime(df["birth_date"], errors="coerce")
     df["age"] = ((today - df["birth_date"]).dt.days / 365.25).round(1)
     return df.groupby("firm_id")["age"].mean().reset_index(name="average_age")
+
+
+
+def average_net_salary_by_firm(df_salary, df_contract):
+    """
+    Calculate the average net salary by firm.
+
+    This function merges two dataframes: one containing salary information and 
+    another containing contract information. It groups the merged data by firm 
+    and computes the mean of the "Net Salary" column for each firm.
+
+    Parameters:
+        df_salary (pd.DataFrame): A dataframe containing salary information with 
+                                  at least the columns "person_id" and "Net Salary".
+        df_contract (pd.DataFrame): A dataframe containing contract information with 
+                                    at least the columns "person_id" and "firm_id".
+
+    Returns:
+        pd.DataFrame: A dataframe with two columns:
+                      - "firm_id": The unique identifier for each firm.
+                      - "average_net_salary": The average net salary for each firm.
+    """
+    df = df_salary.merge(df_contract[["person_id", "firm_id"]], on="person_id", how="left")
+    return (
+        df.groupby("firm_id")["Net Salary"]
+        .mean()
+        .reset_index()
+        .rename(columns={"Net Salary": "average_net_salary"})
+    )
+
+def salary_trend(df_salary):
+    """
+    Analyzes salary trends over time by calculating the average net salary 
+    for each period.
+
+    Args:
+        df_salary (pd.DataFrame): A DataFrame containing salary data with 
+            at least two columns:
+            - "Period": The time period (e.g., month, year) for grouping.
+            - "Net Salary": The net salary values to calculate the average.
+
+    Returns:
+        pd.DataFrame: A DataFrame with two columns:
+            - "Period": The time period.
+            - "Net Salary": The average net salary for each period, sorted 
+              by the "Period" column.
+    """
+    return (
+        df_salary
+        .groupby("Period")["Net Salary"]
+        .mean()
+        .reset_index()
+        .sort_values("Period")
+    )
+def gender_pay_gap(df_salary, df_contract):
+    """
+    Calculate the average net salary by gender.
+
+    This function merges two dataframes, one containing salary information and 
+    the other containing contract information with gender data. It computes 
+    the average net salary for each gender.
+
+    Args:
+        df_salary (pd.DataFrame): A dataframe containing salary information. 
+            Must include the columns:
+            - "person_id": Unique identifier for each person.
+            - "Net Salary": The net salary of the person.
+        df_contract (pd.DataFrame): A dataframe containing contract information. 
+            Must include the columns:
+            - "person_id": Unique identifier for each person.
+            - "gender": The gender of the person.
+
+    Returns:
+        pd.DataFrame: A dataframe with two columns:
+            - "gender": The gender of the individuals.
+            - "average_salary": The average net salary for each gender.
+    """
+    df = df_salary.merge(df_contract[["person_id", "gender"]], on="person_id", how="left")
+    return (
+        df.groupby("gender")["Net Salary"]
+        .mean()
+        .reset_index()
+        .rename(columns={"Net Salary": "average_salary"})
+    )

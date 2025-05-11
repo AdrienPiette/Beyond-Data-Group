@@ -9,6 +9,7 @@ database and uses Plotly for visualizations.
 import sqlite3
 import plotly.express as px
 import streamlit as st
+import pandas as pd
 
 from model import (
     absences_by_type,
@@ -19,7 +20,7 @@ from model import (
     gender_distribution_by_firm,
     load_absence_type,
     load_data,
-    total_employees_by_firm,
+    total_employees_by_firm,    
 )
 
 # Database connection
@@ -28,6 +29,38 @@ conn = sqlite3.connect(
 )
 df = load_data(conn)
 df_abs_type = load_absence_type(conn)
+df_salary = pd.read_sql("SELECT * FROM salary_statement", conn)
+print(df_salary.dtypes)
+print(df_salary.head(3))
+
+
+df_salary["net_salary"] = (
+    df_salary["net_salary"]
+    .astype(str)  # au cas où il y a des NaN
+    .str.replace(",", ".", regex=False)  # remplace les virgules décimales
+    .str.extract(r"([-+]?\d*\.\d+|\d+)")  # extrait le premier nombre valide
+    .astype(float)
+)
+
+df_salary["gross_salary_108"] = (
+    df_salary["gross_salary_108"]
+    .fillna("")  # Remplace les NaN par des chaînes vides
+    .astype(str)  # Convertit en chaîne
+    .str.replace(",", ".", regex=False)  # Remplace les virgules décimales
+    .str.extract(r"([-+]?\d*\.\d+|\d+)")  # Extrait le premier nombre valide
+    .astype(float)  # Convertit en float
+)
+
+df_salary["gross_salary"] = (
+    df_salary["gross_salary"]
+    .fillna("")
+    .astype(str)
+    .str.replace(",", ".", regex=False)
+    .str.extract(r"([-+]?\d*\.\d+|\d+)")
+    .astype(float)
+)
+
+
 
 # UI
 st.set_page_config(page_title="HR Dashboard", layout="wide")
@@ -36,6 +69,7 @@ st.title("📊 HR Dashboard - Power BI Simulation")
 # Company selector
 firm_ids = df["firm_id"].dropna().unique()
 selected_firm = st.selectbox("🏢 Choose a company", sorted(firm_ids))
+
 
 # Data filtering
 df_firm = df[df["firm_id"] == selected_firm]
@@ -103,3 +137,86 @@ if not absence_summary.empty:
     st.plotly_chart(fig_abs, use_container_width=True)
 else:
     st.info("No absences recorded for this company.")
+
+# ----------------------------
+# 💰 Salary Analysis Section
+# ----------------------------
+st.markdown("## 💰 Salary Analysis")
+
+if df_salary["net_salary"].notna().sum() == 0:
+    st.info("No salary data available.")
+else:
+    # Average salary
+    avg_salary = df_salary["net_salary"].mean()
+    st.metric("💶 Average Net Salary", f"{avg_salary:.2f} €")
+
+    # Trend over time
+    st.subheader("📈 Net Salary Trend Over Time")
+    df_salary["period"] = pd.to_datetime(df_salary["period"], errors="coerce")
+    df_trend = (
+        df_salary.dropna(subset=["period"])
+        .groupby("period")["net_salary"]
+        .mean()
+        .reset_index()
+        .sort_values("period")
+    )
+
+    fig_trend = px.line(
+        df_trend,
+        x="period",
+        y="net_salary",
+        title="Average Net Salary Over Time",
+        markers=True,
+    )
+    st.plotly_chart(fig_trend, use_container_width=True)
+
+    # Distribution
+    filtered = df_salary[(df_salary["gross_salary"] >= 300) & (df_salary["gross_salary"] <= 5000)]
+
+    st.subheader("📊 Gross Salary distribution")
+
+    fig_dist = px.histogram(
+        filtered,
+        x="gross_salary",
+        nbins=30,
+        title="Gross Salary Distribution (300€–5000€)",
+    )
+
+    st.plotly_chart(fig_dist, use_container_width=True)
+
+
+
+
+
+
+
+    filtered = df_salary[(df_salary["net_salary"] >= 300) & (df_salary["net_salary"] <= 5000)]
+
+    st.subheader("📊 Net Salary Distribution (Filtered)")
+    fig_dist = px.histogram(
+        filtered,
+        x="net_salary",
+        nbins=30,
+        title="Net Salary Distribution (300€–5000€)",
+    )
+    st.plotly_chart(fig_dist, use_container_width=True)
+
+    st.subheader("📊 Gross Salary 108 Distribution (Filtered)")
+
+    filtered_108 = df_salary[
+    (df_salary["gross_salary_108"] >= 300) & (df_salary["gross_salary_108"] <= 5000)
+    ]
+
+   
+    fig_dist_108 = px.histogram(
+        filtered_108,
+        x="gross_salary_108",
+        nbins=30,
+        title="Gross Salary 108 Distribution (300€–5000€)",
+    )
+    st.plotly_chart(fig_dist_108, use_container_width=True)
+
+
+
+
+    
