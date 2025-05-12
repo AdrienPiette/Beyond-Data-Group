@@ -69,18 +69,6 @@ Future ideas:
 
 ---
 
-## 💡 How to Run
-1. Install dependencies:
-```bash
-pip install streamlit pandas plotly
-```
-
-2. Run the dashboard:
-```bash
-streamlit run app.py
-```
-
----
 
 ## 🔥 Key Learnings
 - Simulated a full Microsoft Fabric pipeline using open tools
