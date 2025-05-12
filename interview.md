@@ -47,6 +47,10 @@
 
 ## ✅ PART 2 — Définitions clés de Microsoft Fabric
 
+### 🔹 **Data Lake**
+
+> Un Data Lake est un stockage centralisé conçu pour contenir de grandes quantités de données brutes, structurées ou non structurées, dans leur format natif. Il permet une ingestion rapide et une flexibilité pour l’analyse ou la transformation ultérieure.
+
 ### 🔹 **OneLake**
 
 > Le Data Lake unifié de Microsoft. Il centralise le stockage de tous les fichiers utilisés par Fabric (Parquet, Delta…) et permet un accès partagé entre les outils.
